@@ -1,13 +1,15 @@
 import React, {lazy, Suspense} from "react"
 
 const Dashboard = lazy(() => import ("./pages/dashboard"))
-// const Login = lazy(() => import ("./pages/login"))
-// const SignUp = lazy(() => import ("./pages/signup"))
-// const Profile = lazy(() => import ("./pages/profile"))
-// const NotFound = lazy(() => import ("./pages/not-found"))
+const Login = lazy(() => import ("./pages/login"))
+const SignUp = lazy(() => import ("./pages/signup"))
+const Profile = lazy(() => import ("./pages/profile"))
+const NotFound = lazy(() => import ("./pages/not-found"))
 
 export default function App() {
     return (
-        <p>Hello</p>
-    )
+        <Suspense fallback={<p>Loading...</p>}>
+            <p>Here is where our content will be placed</p>
+        </Suspense>
+        )
 }
