@@ -21,6 +21,5 @@ export default function App() {
                 </Switch>
             </Suspense>
         </Router>
-        
         )
 }
