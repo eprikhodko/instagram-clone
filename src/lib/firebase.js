@@ -21,10 +21,6 @@ const firebaseConfig = {
   // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// try another way:
-
-// const firebase = firebase.initializeApp(firebaseConfig)
-
 const {FieldValue} = firebase.firestore
 
 // seedDatabase(firebase)
