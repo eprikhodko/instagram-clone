@@ -1,9 +1,15 @@
-import React from "react"
+import React, {useEffect} from "react"
 import {Link} from "react-router-dom"
 // * star symbol means all. So below we're importing ALL routes as ROUTES from our routes constant in /constants/routes 
 import * as ROUTES from "../constants/routes"
 
 export default function Login() {
+
+    // change page title, after component did mount
+    useEffect(() => {
+        document.title = "Login - Instagram"
+    }, [])
+
     return(
         <div className="container flex mx-auto max-w-screen-md items-center h-screen">
             <div className="flex w-3/5">
