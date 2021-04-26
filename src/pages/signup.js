@@ -2,48 +2,58 @@ import React, {useState, useEffect, useContext} from "react"
 import {Link} from "react-router-dom"
 import FirebaseContext from "../context/firebase"
 import * as ROUTES from "../constants/routes"
+import {doesUsernameExist} from "../services/firebase"
 
 export default function SignUp() {
-    const {firebase} = useContext(FirebaseContext)
-
-    const [username, setUsername] = useState('')
-    const [fullName, setFullName] = useState('')
-    const [emailAddress, setEmailAddress] = useState('')
-    const [password, setPassword] = useState('')
+    const { firebase } = useContext(FirebaseContext);
     
-    const [error, setError] = useState('')
-    const isInvalid = username === '' || fullName === '' || password === '' || emailAddress === ''
-
+    const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [password, setPassword] = useState('');
+    
+    const [error, setError] = useState('');
+    const isInvalid = username === '' || fullName === '' || password === '' || emailAddress === '';
+    
     const handleSignUp = async (event) => {
         event.preventDefault();
-        
-        try {
-            const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password);
-            
-            await createdUserResult.user.updateProfile({
-                displayName: username
-            });
-            
-            await firebase.firestore().collection('users').add({
-                userId: createdUserResult.user.uid,
-                username: username.toLowerCase(),
-                fullName,
-                emailAddress: emailAddress.toLowerCase(),
-                following: [],
-                followers: [],
-                dateCreated: Date.now()
-            });
-        } catch (error) {
+      
+        const usernameExists = await doesUsernameExist(username);
+        if (!usernameExists.length) {
+            try {
+                const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password);
+                
+                await createdUserResult.user.updateProfile({
+                    displayName: username
+                });
+                
+                await firebase.firestore().collection('users').add({
+                    userId: createdUserResult.user.uid,
+                    username: username.toLowerCase(),
+                    fullName,
+                    emailAddress: emailAddress.toLowerCase(),
+                    following: [],
+                    followers: [],
+                    dateCreated: Date.now()
+                });
+                
+                // we have to do a redirect to the dashboard
+            } catch (error) {
+                setFullName('');
+                setError(error.message);
+            }
+        } else {
+            setUsername('');
             setFullName('');
             setEmailAddress('');
             setPassword('');
-            setError(error.message);
-        }
+            setError('That username is already taken, please try another!')
+        }       
     }
     
     useEffect(() => {
-        document.title = 'Sign Up - Instagram'
-    }, [])
+        document.title = 'Sign Up - Instagram';
+    }, []);
     
     return (
         <div className="container flex mx-auto max-w-xs items-center h-screen">
