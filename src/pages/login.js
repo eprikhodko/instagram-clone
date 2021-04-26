@@ -1,14 +1,29 @@
-import React, {useEffect, useState} from "react"
+import React, {useContext, useEffect, useState} from "react"
 import {Link} from "react-router-dom"
+import FirebaseContext from "../context/firebase"
 // * star symbol means all. So below we're importing ALL routes as ROUTES from our routes constant in /constants/routes 
 import * as ROUTES from "../constants/routes"
 
 export default function Login() {
+    const {firebase} = useContext(FirebaseContext)
+
     const [emailAddress, setEmailAddress] = useState("")
     const[password, setPassword] = useState("")
 
     const [error, setError] = useState("")
     const isInvalid = password === "" || emailAddress === ""
+
+    const handleLogin = async (event) => {
+        event.preventDefault()
+
+        try {
+            await firebase.auth().signInWithEmailAndPassword(emailAddress, password)
+        } catch (error) {
+            setEmailAddress("")
+            setPassword("")
+            setError(error.message)
+        }
+    }
 
 
     // change page title, after component did mount
@@ -27,7 +42,10 @@ export default function Login() {
                     <img src="/images/logo.png" alt="Instagram" className="mt-2 w-6/12 mb-4" />
                 </h1>
                 
-                <form method="POST">
+                {/* show error if there is some problems with login */}
+                {error && <p className="mb-4 text-xs text-red-500">{error}</p>}
+                
+                <form onSubmit={handleLogin} method="POST">
                     <input
                         aria-label="Enter your email address"
                         className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
